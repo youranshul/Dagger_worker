@@ -1,12 +1,10 @@
 package com.zebra.myapplication.dagger
 
 import android.content.Context
+import android.util.Log
 import androidx.work.ListenableWorker
-import androidx.work.Worker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -19,6 +17,7 @@ class AppWorkerFactory @Inject constructor(
             workerClassName: String,
             workerParameters: WorkerParameters
     ): ListenableWorker? {
+        Log.i("Ansh", "createWorker ")
         val foundEntry =
                 workerFactories.entries.find { Class.forName(workerClassName).isAssignableFrom(it.key) }
         val factoryProvider = foundEntry?.value
@@ -32,25 +31,3 @@ interface ChildWorkerFactory {
 }
 
 
-class BisonWorker @AssistedInject constructor(
-    @Assisted private val appContext: Context,
-    @Assisted private val params: WorkerParameters,
-    private val niData: NiData,
-    private val viData: ViData
-) : Worker(appContext, params) {
-    override fun doWork(): Result {
-
-        niData.setData("I am init")
-        viData.setData("I am init")
-        return Result.success()
-    }
-
-
-
-
-    @AssistedInject.Factory
-    interface Factory : ChildWorkerFactory
-    companion object {
-        private const val TAG = "BisonWorker"
-    }
-}
